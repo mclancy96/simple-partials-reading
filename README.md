@@ -17,7 +17,7 @@ Let's look at an example to see what this means.
 
 ## Example
 
-Before we get started, make sure that you run `rake db:seed` to seed the database. This will give us some posts and authors. Because we want to focus on partials, you'll notice some hard-coding in the controller. In the `posts#create` action, we've hard-coded that every new post created is linked to the very first author in the database.
+Before we get started, make sure that you run `bin/rails db:seed` to seed the database. This will give us some posts and authors. Because we want to focus on partials, you'll notice some hard-coding in the controller. In the `posts#create` action, we've hard-coded that every new post created is linked to the very first author in the database.
 
 OK, let's dive in!
 
@@ -26,7 +26,7 @@ This is the code in the `posts#new` form:
 ```erb
 <!-- app/views/posts/new.html.erb -->
 
-<%= form_tag posts_path do %>
+<%= form_with url: posts_path do %>
   <label>Post title:</label><br>
   <%= text_field_tag :title, @post.title %><br>
 
@@ -44,7 +44,7 @@ And this is the code in the `posts#edit` form:
 
 <h3>Post Form</h3>
 
-<%= form_tag post_path(@post), method: "put" do %>
+<%= form_with url: post_path(@post), method: "put" do %>
   <label>Post title:</label><br>
   <%= text_field_tag :title, @post.title %><br>
 
@@ -66,16 +66,16 @@ Second, let's remove the repeated code in `app/views/posts/edit.html.erb`. The f
 ```erb
 <h3>Post Form</h3>
 
-<%= form_tag post_path(@post), method: "put" do %>
+<%= form_with url: post_path(@post), method: "put" do %>
 <% end %>
 ```
 Note that we left in the non-duplicated code. Now, let's also remove the duplicated code in the `app/views/posts/new.html.erb` file. The file should look like this:
 
 ```erb
-<%= form_tag posts_path do %>
+<%= form_with url: posts_path do %>
 <% end %>
 ```
-We left the code that is unique to each view and removed the duplicated code inside the `form_tag` blocks.
+We left the code that is unique to each view and removed the duplicated code inside the `form_with` blocks.
 
 So, now what? It looks like we are missing a bunch of code in our `posts/new` and `posts/edit` files. Not to worry –– that's where our partial comes in handy.
 
@@ -98,7 +98,7 @@ Our `posts/new` file should now look like this:
 ```erb
 <!-- app/views/posts/new.html.erb -->
 
-<%= form_tag posts_path do %>
+<%= form_with url: posts_path do %>
  <%= render 'form' %>
 <% end %>
 ```
@@ -110,7 +110,7 @@ And our `posts/edit` file like this:
 
 <h3>Post Form</h3>
 
-<%= form_tag post_path(@post), method: "put" do %>
+<%= form_with url: post_path(@post), method: "put" do %>
   <%= render 'form' %>
 <% end %>
 ```
@@ -119,7 +119,7 @@ And that's it –– we're all done!
 
 A couple of things to note:
 
-1. Notice that, even though the last line of the form (the `<% end %>` tag) is duplicated code, we didn't move it into the partial. This is because it closes the beginning of the `form_tag` block, which DOES differ from form to form. We don't want to open our `form_tag` block in one file and close it in a different file. This is a stylistic point that you will get a feel for over time.
+1. Notice that, even though the last line of the form (the `<% end %>` tag) is duplicated code, we didn't move it into the partial. This is because it closes the beginning of the `form_with` block, which DOES differ from form to form. We don't want to open our `form_with` block in one file and close it in a different file. This is a stylistic point that you will get a feel for over time.
 
 2. We could have named the partial whatever we wanted to. The only requirements are that it start with an underscore and that references to the partial are made without the underscore. But, just like method names, it's good to make the names of our partials as commonsensical as possible.
 
