@@ -26,14 +26,14 @@ This is the code in the `posts#new` form:
 ```erb
 <!-- app/views/posts/new.html.erb -->
 
-<%= form_with url: posts_path do %>
+<%= form_with model: @post do |form| %>
   <label>Post title:</label><br>
-  <%= text_field_tag :title, @post.title %><br>
+  <%= form.text_field :title %><br>
 
   <label>Post Description</label><br>
-  <%= text_area_tag :description, @post.description %><br>
+  <%= form.text_area :description %><br>
 
-  <%= submit_tag "Submit Post" %>
+  <%= form.submit "Submit Post" %>
 <% end %>
 ```
 
@@ -44,14 +44,14 @@ And this is the code in the `posts#edit` form:
 
 <h3>Post Form</h3>
 
-<%= form_with url: post_path(@post), method: "put" do %>
+<%= form_with model: @post do |form| %>
   <label>Post title:</label><br>
-  <%= text_field_tag :title, @post.title %><br>
+  <%= form.text_field :title %><br>
 
   <label>Post Description</label><br>
-  <%= text_area_tag :description, @post.description %><br>
+  <%= form.text_area :description %><br>
 
-  <%= submit_tag "Submit Post" %>
+  <%= form.submit "Submit Post" %>
 <% end %>
 ```
 
@@ -66,15 +66,17 @@ Second, let's remove the repeated code in `app/views/posts/edit.html.erb`. The f
 ```erb
 <h3>Post Form</h3>
 
-<%= form_with url: post_path(@post), method: "put" do %>
+<%= form_with model: @post do |form| %>
 <% end %>
 ```
+
 Note that we left in the non-duplicated code. Now, let's also remove the duplicated code in the `app/views/posts/new.html.erb` file. The file should look like this:
 
 ```erb
-<%= form_with url: posts_path do %>
+<%= form_with model: @post do |form| %>
 <% end %>
 ```
+
 We left the code that is unique to each view and removed the duplicated code inside the `form_with` blocks.
 
 So, now what? It looks like we are missing a bunch of code in our `posts/new` and `posts/edit` files. Not to worry –– that's where our partial comes in handy.
@@ -83,12 +85,12 @@ First, we'll place the duplicated code in our new `_form.html.erb` file. The fil
 
 ```erb
 <label>Post title:</label><br>
-<%= text_field_tag :title, @post.title %><br>
+<%= form.text_field :title %><br>
 
 <label>Post Description</label><br>
-<%= text_area_tag :description, @post.description %><br>
+<%= form.text_area :description %><br>
 
-<%= submit_tag "Submit Post" %>
+<%= form.submit "Submit Post" %>
 ```
 
 Next, we need to render the code into the `posts/edit` and `posts/new` pages by placing `<%= render "form" %>` where we want the code in the partial to be rendered. Notice that, while the file name of our partial starts with an underscore, when we reference it there is no underscore.
@@ -98,8 +100,8 @@ Our `posts/new` file should now look like this:
 ```erb
 <!-- app/views/posts/new.html.erb -->
 
-<%= form_with url: posts_path do %>
- <%= render 'form' %>
+<%= form_with model: @post do |form| %>
+ <%= render 'form', form: form %>
 <% end %>
 ```
 
@@ -110,8 +112,8 @@ And our `posts/edit` file like this:
 
 <h3>Post Form</h3>
 
-<%= form_with url: post_path(@post), method: "put" do %>
-  <%= render 'form' %>
+<%= form_with model: @post do |form| %>
+  <%= render 'form', form: form %>
 <% end %>
 ```
 
